@@ -1,13 +1,13 @@
 package $package$
 
 import android.os.Bundle
-import android.support.v7.app.ActionBarActivity
+import android.app.Activity
 import android.widget.TextView
 
-class MainActivity extends ActionBarActivity {
+class MainActivity extends Activity with TypedActivity {
   override def onCreate(bundle: Bundle) {
     super.onCreate(bundle)
     setContentView(R.layout.main)
-    findView(TR.textview).foreach(_.setText("hello, world!"))
+    findView(TR.textview).setText("hello, world!"))
   }
 }

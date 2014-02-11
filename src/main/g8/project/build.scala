@@ -18,12 +18,8 @@ object General {
   )
 
   val libraryDependencies = Seq(
-    "android.support" % "compatibility-v4" % "19.+",
-    "android.support" % "compatibility-v7-appcompat" % "19.+"//,
-    //apklib("android.support" % "compatibility-v7-appcompat" % "19.+")
+    "android.support" % "compatibility-v4" % "19.+"
   )
-
-  val scalacOptions = Seq("-feature")
 
   val proguardSettings = Seq (
     useProguard in Android := true,
