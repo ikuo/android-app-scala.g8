@@ -1,16 +1,17 @@
 import sbt._
 import Keys._
-import sbtandroid.AndroidPlugin._
+import AndroidKeys._
 
 object General {
-  val baseSettings = {
+  val settings = Defaults.defaultSettings ++ Seq(
     name := "$name$",
     version := "$version$",
+    versionCode := $versionCode$,
     scalaVersion := "$scalaVersion$",
     platformName := "android-$targetSdkVersion$",
-    keyalias := "$keyalias$",
+    keyalias := "alias",
     useProguard := true
-  }
+  )
 
   val resolvers = Seq(
     "Local Maven Repository" at ("file://" + Path.userHome.absolutePath + "/.m2/repository")
@@ -18,32 +19,32 @@ object General {
 
   val libraryDependencies = Seq(
     "android.support" % "compatibility-v4" % "19.+",
-    "android.support" % "compatibility-v7-appcompat" % "19.+",
-    apklib("android.support" % "compatibility-v7-appcompat" % "19.+")
+    "android.support" % "compatibility-v7-appcompat" % "19.+"//,
+    //apklib("android.support" % "compatibility-v7-appcompat" % "19.+")
   )
 
   val scalacOptions = Seq("-feature")
 
-  val proguardOptions = Seq(
-    "-keep class android.support.v4.app.** { *; }",
-    "-keep interface android.support.v4.app.** { *; }",
-
-    "-keep class android.support.v7.app.** { *; }",
-    "-keep interface android.support.v7.app.** { *; }",
-    "-keep class android.support.v7.appcompat.** { *; }",
-    "-keep interface android.support.v7.appcompat.** { *; }"
+  val proguardSettings = Seq (
+    useProguard in Android := true,
+    proguardOption in Android := "-dontnote **"
   )
+
+  lazy val fullAndroidSettings =
+    General.settings ++
+    AndroidProject.androidSettings ++
+    TypedResources.settings ++
+    proguardSettings ++
+    AndroidManifestGenerator.settings ++
+    AndroidMarketPublish.settings ++ Seq (
+      keyalias in Android := "$keyalias$"
+    )
 }
 
 object AndroidBuild extends Build {
-  lazy val main = AndroidProject(
-    id       = "$name;format="normalize"$",
-    base     = file("."),
-    settings = General.baseSettings ++ Seq(
-      resolvers           ++= General.resolvers,
-      libraryDependencies ++= General.libraryDependencies,
-      scalacOptions       ++= General.scalacOptions,
-      proguardOptions     :=  General.proguardOptions
-    )
+  lazy val main = Project(
+    "$name;format="normalize"$",
+    file("."),
+    settings = General.fullAndroidSettings
   )
 }
